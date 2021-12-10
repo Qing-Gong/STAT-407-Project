@@ -1,0 +1,242 @@
+---
+title: "STAT407 - Statistical Design and Analysis of Experiments Project"
+author: "Louis Dulana, Qing Gong "
+output:
+  pdf_document: default
+  html_document: default
+  
+---
+
+```{r setup, include=FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css, echo=FALSE}
+h1{text-align: center; 
+  color:Tomato;
+  #font-weight: bold;}
+   
+h4{text-align:center;
+  color:DarkSlateGray}
+
+h5{text-align:left;
+  color:SlateBlue;}
+```
+**Research Question 1:** *Do the machine type, wearing a mask, and subjects affect the heart rate?*
+
+*We will input the data as follows:*
+
+*A = machine, B = mask, C = subject, where*
+
+*-1 = Louis, Apple, and without mask and*
+
+*1 = Qing, Fitbit, with mask.*
+
+```{r, message=FALSE, warning=FALSE}
+data2 <- read.csv("raw.csv")
+#head(data)
+#covert  A, B, C into factors
+nms <- c("A", "B", "C")
+data2[,nms] <- lapply(data2[,nms], factor)
+```
+
++-------------+------------+-----------+----------+------------+----------+:-----:+:-----:+:-----:+
+| **subject** | **before** | **after** | **mask** | **device** | **diff** | **A** | **B** | **C** |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Qing        | 91         | 94        | 1        | treadmill  | 3        | 1     | 1     | 1     |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Qing        | 91         | 124       | 0        | elliptical | 33       | -1    | -1    | 1     |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Qing        | 92         | 121       | 1        | elliptical | 29       | -1    | 1     | 1     |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Qing        | 97         | 111       | 0        | treadmill  | 14       | 1     | -1    | 1     |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Louis       | 72         | 86        | 1        | elliptical | 14       | -1    | 1     | -1    |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Louis       | 72         | 92        | 0        | elliptical | 20       | -1    | -1    | -1    |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Louis       | 71         | 79        | 1        | treadmill  | 8        | 1     | 1     | -1    |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+| Louis       | 76         | 79        | 0        | treadmill  | 3        | 1     | -1    | -1    |
++-------------+------------+-----------+----------+------------+----------+-------+-------+-------+
+
+*Let's begin with fitting a full model.*
+
+*Since it is impossible to obtain information from the full model, that is, checking which factors have significant effect on the heart rate, we will instead check the half-normal probability plot.*
+
+```{r}
+m1 <- lm(diff ~A*C*B, data = data2)
+anova(m1)
+effect <- abs(m1$effects)[-1]
+effect
+half <- qqnorm(effect, type = "n")
+qqline(effect)
+text(half$x, half$y, labels = names(effect), cex = 0.8, col="red")
+```
+
+*The half-normal probability plot shows that factors A and C (machine and subject) may have statistically significant effect on the heart rate. Thus, we will fit another model with just these two factors.*
+
+```{r}
+m2 <- lm(diff ~ A+C , data = data2)
+anova(m2)
+```
+
+*Clearly, we could see that machine type (A) is significant at 5%. Subject (C) is not significant at 5%, but is significant at 10%. Let's now check the normality and homoscedasticity assumption for the reduced model (m2).*
+
+```{r}
+shapiro.test(m2$residuals)
+
+bartlett.test(m2$residuals, data2$A)
+bartlett.test(m2$residuals, data2$C)
+```
+
+*Based on the shapiro and bartlett's test, normality and equal variance assumptions are verified. We will now move on to Research Question 2.*
+
+**Research Question 2:** *Do watch brand, wearing a mask, and subject affect the reported heart rate while using the treadmill?*
+
+*We will input the data as follows:*
+
+*A = watch, B = mask, C = subject, where*
+
+*-1 = Louis, Apple, and without mask and*
+
+*1 = Qing, Fitbit, with mask.*
+
+```{r}
+proj.data <- read.csv("project_data.csv")
+#head(proj.data,16)
+
+```
+
++-------------+------------+-----------+----------+-----------+----------------+------:+------:+------:+
+| **subject** | **before** | **after** | **mask** | **watch** | **difference** | **A** | **B** | **C** |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 71         | 124       | 1        | fitbit    | 53             | 1     | 1     | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 73         | 109       | 0        | fitbit    | 36             | 1     | -1    | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 76         | 143       | 0        | apple     | 67             | -1    | -1    | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 71         | 113       | 1        | apple     | 42             | -1    | 1     | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 71         | 106       | 1        | fitbit    | 35             | 1     | 1     | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 71         | 135       | 0        | fitbit    | 64             | 1     | -1    | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 69         | 111       | 0        | apple     | 42             | -1    | -1    | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Louis       | 70         | 101       | 1        | apple     | 31             | -1    | 1     | -1    |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 91         | 122       | 1        | fitbit    | 31             | 1     | 1     | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 85         | 112       | 0        | apple     | 27             | -1    | -1    | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 97         | 119       | 0        | fitbit    | 22             | 1     | -1    | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 86         | 108       | 1        | apple     | 22             | -1    | 1     | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 80         | 99        | 1        | fitbit    | 19             | 1     | 1     | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 84         | 108       | 1        | apple     | 24             | -1    | 1     | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 78         | 97        | 0        | fitbit    | 19             | 1     | -1    | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+| Qing        | 86         | 108       | 0        | apple     | 22             | -1    | -1    | 1     |
++-------------+------------+-----------+----------+-----------+----------------+-------+-------+-------+
+
+*Let's convert variables into factors before running anova.*
+
+```{r}
+proj.data$A <- as.factor(proj.data$A)
+proj.data$B <- as.factor(proj.data$B)
+proj.data$C <- as.factor(proj.data$C)
+
+
+m2 <- lm(diff ~ (A+B+C)^3, data = proj.data)
+anova(m2)
+```
+
+*We could see from the full model that only factor C, which is subject had a significant effect on the reported heart rate. Also, notice that factor A does not affect the reported heart rate given the high p-value (0.9657). So, let's fit a reduced model with just B and C as factors.*
+
+```{r}
+m4 <- lm(diff ~ B+C, data = proj.data)
+anova(m4)
+```
+
+*Even with the reduced model, subject is still highly significant.*
+
+*Let's also check the normality and homoscedasticity assumption.*
+
+```{r}
+shapiro.test(m4$residuals)
+
+bartlett.test(m4$residuals, proj.data$B)
+bartlett.test(m4$residuals, proj.data$C)
+```
+
+*Based on the shapiro and bartlett's test, normality and equal variance are verified except factor C violates homoscedasticiy assumption. So, as a remedy, let's try and take the log transformation of the response variable, difference.*
+
+```{r}
+proj.data$logdiff <- log(proj.data$diff)
+
+m5 <- lm(logdiff ~ B+C, data = proj.data)
+anova(m5)
+```
+
+*As a result, both normality and equal variance are now verified below.*
+
+```{r}
+shapiro.test(m5$residuals)
+```
+
+```{r}
+bartlett.test(m5$residuals, proj.data$B)
+bartlett.test(m5$residuals, proj.data$C)
+```
+
+***Additional Analysis:** Confounding* $2^3$ *Factor Design with Two Blocks*
+
+*We will confound ABC with day as our blocks.*
+
+```{r}
+#ABC confounded as blocks
+d2 <- read.csv("DAY2.csv")
+ABC <- d2$A*d2$B*d2$C
+mm1 <- lm(diff ~A*C*B, data = d2)
+anova(mm1)
+
+```
+
+*Since we only have one replicate, again, we will not be able to obtain useful information from the ANOVA table above. So, let's create a normal probability plot to check which factors are significant.*
+
+```{r}
+effect <- abs(mm1$effects)[-1]
+half <- qqnorm(effect, type = "n")
+qqline(effect)
+text(half$x, half$y, labels = names(effect), cex = 0.8, col="blue")
+
+```
+
+\*Based on the half-normal probability plot, we could see that factor C is highly significant and interactions AB and AC could be significant as well.
+
+```{r}
+m1 <- lm(avg-before ~ A+C+A*B + A*C, data = d2)
+anova(m1)
+```
+
+*Based on the ANOVA table above, none of the factors and interactions AB and AC turned out to be significant. Thus, let's try and fit another reduced model, but with just with factor C, B, ABC.*
+
+```{r}
+m2 <- lm(avg-before ~ B+C + ABC, data =d2)
+anova(m2)
+```
+
+*Again, based on the ANOVA table above, only subject (C) is significant.*
+
+*Below also shows verification of the normality and homoscedasticity assumptions.*
+
+```{r}
+shapiro.test(m2$residuals)
+bartlett.test(m2$residuals, d2$B)
+bartlett.test(m2$residuals, d2$C)
+```
