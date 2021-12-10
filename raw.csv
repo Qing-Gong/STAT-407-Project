@@ -1,0 +1,9 @@
+subject,before,after,avg,mask,watch,device,diff,A,B,C
+Qing,91,94,122,1,fitbit,treadmill,3,1,1,1
+Qing,91,124,126,0,fitbit,elliptical,33,-1,-1,1
+Qing,92,121,150,1,fitbit,elliptical,29,-1,1,1
+Qing,97,111,119,0,fitbit,treadmill,14,1,-1,1
+Louis,72,86,101,1,apple,elliptical,14,-1,1,-1
+Louis,72,92,107,0,apple,elliptical,20,-1,-1,-1
+Louis,71,79,113,1,apple,treadmill,8,1,1,-1
+Louis,76,79,143,0,apple,treadmill,3,1,-1,-1

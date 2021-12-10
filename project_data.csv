@@ -1,0 +1,17 @@
+subject,before,after,average,mask,watch,difference,A,B ,C
+Louis,71,75,124,1,fitbit,53,1,1,-1
+Louis,73,77,109,0,fitbit,36,1,-1,-1
+Louis,76,79,143,0,apple,67,-1,-1,-1
+Louis,71,79,113,1,apple,42,-1,1,-1
+Louis,71,99,106,1,fitbit,35,1,1,-1
+Louis,71,79,135,0,fitbit,64,1,-1,-1
+Louis,69,92,111,0,apple,42,-1,-1,-1
+Louis,70,89,101,1,apple,31,-1,1,-1
+Qing,91,94,122,1,fitbit,31,1,1,1
+Qing,85,97,112,0,apple,27,-1,-1,1
+Qing,97,111,119,0,fitbit,22,1,-1,1
+Qing,86,96,108,1,apple,22,-1,1,1
+Qing,80,94,99,1,fitbit,19,1,1,1
+Qing,84,87,108,1,apple,24,-1,1,1
+Qing,78,89,97,0,fitbit,19,1,-1,1
+Qing,86,90,108,0,apple,22,-1,-1,1

@@ -1,0 +1,9 @@
+subject,before,after,avg,mask,watch,diff,C,B,A,AB
+Qing,80,94,99,1,fitbit,14,1,1,1,1
+Qing,78,89,97,0,fitbit,11,1,-1,1,-1
+Louis,71,99,106,1,fitbit,28,-1,1,1,1
+Louis,71,79,135,0,fitbit,8,-1,-1,1,-1
+Qing,84,87,108,1,apple,3,1,1,-1,-1
+Qing,86,90,108,0,apple,4,1,-1,-1,1
+Louis,69,92,111,0,apple,23,-1,-1,-1,1
+Louis,70,89,101,1,apple,19,-1,1,-1,-1
